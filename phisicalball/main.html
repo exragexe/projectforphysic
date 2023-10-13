@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Прискорення вільного падіння</title>
+    <style>
+        .rectangletop {
+            width: 220px;
+            height: 50px;
+            background-color: rgb(0, 0, 0);
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+        .rectanglebottom {
+            width: 25%;
+            height: 120px;
+            background-color: rgb(0, 0, 0);
+            position: fixed;
+            bottom: 28.2%;
+            left: 37%;
+            z-index: 3;
+        }
+        .rectanglesec {
+            width: 50px;
+            height: 50px;
+            background-color: rgb(58, 58, 58);
+            position: fixed;
+            top: 15.2%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+        .ball {
+            width: 70px;
+            height: 70px;
+            position: absolute;
+            bottom: 76%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-image: url("ball.png");
+            z-index: 5;
+        }
+       
+        .bottom {
+            width: 70px;
+            height: 70px;
+            position: fixed;
+            top: 64%;
+            left: 57%;
+            transform: translate(-25%, -25%);
+            background-image: url("bottom.png");
+            z-index: 5;
+            cursor: pointer;
+        }
+        .line {
+            width: 5px;
+            height: 400px;
+            background-color: rgb(0, 0, 0);
+            position: fixed;
+            top: 38.5%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+        }
+        .info {
+            position: fixed;
+            top: 40%;
+            left: 10%;
+            scale: 1.3;
+        }
+        
+    </style>
+</head>
+<body>
+<div class="rectangletop"></div>
+<div class="rectanglebottom"></div>
+<div class="rectanglesec"></div>
+<img class="ball" src="ball.png" alt="Ball">
+<img class="bottom" src="bottom.png" alt="Bottom">
+<div class="info">
+    <p>Час: <span id="time">0</span>  сек</p>
+    <p>Швидкість: <span id="velocity">0</span> м/с</p>
+    <p>Прискорення: <span id="acceleration">9.8</span> м/с²</p>
+</div>
+<script>
+    let ball = document.querySelector(".ball");
+let initialY = parseFloat(getComputedStyle(ball).bottom);
+
+let velocity = 0;
+let acceleration = 9.8;
+let time = 0;
+let isMoving = false;
+let isAtBottom = false;
+let isStopped = false;
+function updateInitialY() {
+    initialY = parseFloat(getComputedStyle(ball).bottom);
+}
+window.onload = updateInitialY;
+function updateBall() {
+    if (isMoving && !isStopped) {
+        velocity += acceleration * 1.15;
+        let newY = initialY - velocity;
+        
+        if (newY - ball.clientHeight <= 315) {
+           
+            velocity = 0;
+            isAtBottom = true;
+            isStopped = true;
+        } else {
+            isAtBottom = false;
+        }
+        ball.style.bottom = newY + "px";
+       
+        if (!isStopped) {
+            time += 0.015;
+            document.getElementById("time").textContent = time.toFixed(2) ;
+            document.getElementById("velocity").textContent = (velocity / 76.3).toFixed(2) ;
+            document.getElementById("acceleration").textContent = acceleration.toFixed(2) ;
+        }
+    }
+   
+}
+setInterval(updateBall, 1000 / 60);
+let bottomButton = document.querySelector(".bottom");
+bottomButton.addEventListener("click", function () {
+    if (!isMoving) {
+        isMoving = true;
+        velocity = 0;
+        updateInitialY(); 
+        
+        time = 0;
+        isStopped = false;
+    } else {
+        ball.style.bottom = initialY + "px";
+
+        isMoving = false;
+        isStopped = false;
+    }
+});
+</script>
+<div class="line"></div>
+</body>
+</html>
